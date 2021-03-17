@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Download Excel File</h1> 
+<div mat-dialog-content> 
+  <p>Please enter a file name</p> 
+  <mat-form-field>
+    <input matInput [(ngModel)]="data.fileName"> 
+    <span matSuffix>.xlsx</span>
+  </mat-form-field> 
+</div> 
+<div mat-dialog-actions> 
+  <button mat-button (click)="onCancel()">Cancel</button> 
+  <button mat-button [mat-dialog-close]="data.fileName"  
+              [disabled]="!data.fileName">Download</button> 
+</div>

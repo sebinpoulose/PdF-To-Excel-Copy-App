@@ -1,0 +1,170 @@
+<input (change)="onFileSelected()" type="file" id="file" accept=".pdf" />
+
+<div *ngIf="!pdfSrc">
+  <br><br><br>
+  <mat-divider></mat-divider>
+  <br>
+
+  <div class="main-page">
+
+
+
+    <mat-card class="example-card">
+      <mat-card-header>
+        <mat-card-title>PDF - Excel Copy App</mat-card-title>
+        <mat-card-subtitle>Sebin Poulose</mat-card-subtitle>
+      </mat-card-header>
+      <img mat-card-image src="https://icon-library.com/images/file-upload-icon/file-upload-icon-7.jpg"
+        alt="Photo of a Shiba Inu">
+      <mat-card-content>
+        <p>
+          Upload a PDF file to start using the App. The application is still in its development stage and bugs
+          are expected to occur.
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button (click)="openLocalFile()">Select a PDF File</button>
+        <button mat-raised-button (click)="pdfSrc='../assets/sample.pdf'">Use a Sample File</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+
+  <br><br>
+  <mat-divider></mat-divider>
+  <br>
+  blabla
+</div>
+
+
+
+<div *ngIf="pdfSrc" class="pdf-body" style="height: 100%;">
+  <div *ngIf="isOutlineShown" class="outline">
+    <ul *ngFor="let item of outline" class="outline-list">
+      <li>
+        <a (click)="navigateTo(item.dest)"> {{ item.title }} </a>
+
+        <ul *ngFor="let child of item.items">
+          <li>
+            <a (click)="navigateTo(child.dest)"> {{ child.title }} </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <!-- <div *ngIf="!isLoaded && !error && progressData" id="progress">
+    <div class="bg">
+      <div class="bar" [style.width]="(progressData.loaded / progressData.total) * 100 + '%'"></div>
+    </div>
+    <span>{{ getInt((progressData.loaded / progressData.total) * 100) }}%</span>
+  </div> -->
+
+  <pdf-viewer [src]="pdfSrc" [(page)]="page" [rotation]="rotation" [original-size]="originalSize"
+    [fit-to-page]="fitToPage" (after-load-complete)="afterLoadComplete($event)" [zoom]="zoom" [show-all]="showAll"
+    [stick-to-page]="false" [render-text]="renderText" [external-link-target]="'blank'" [autoresize]="autoresize"
+    (error)="onError($event)" (on-progress)="onProgress($event)" (page-rendered)="pageRendered($event)"
+    [show-borders]="true"
+    style="height: 55vh;"></pdf-viewer>
+  <div style="height: 45vh">
+
+
+
+    <button mat-button [matMenuTriggerFor]="excelOptions">
+      <mat-icon>table_view</mat-icon>Excel File Options<mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #excelOptions="matMenu">
+      <button mat-menu-item>Edit Column Headers</button>
+      <button mat-menu-item (click)="$event.stopPropagation();">
+        <mat-slide-toggle [checked]="showRowNumbers">Row Numbers</mat-slide-toggle>
+      </button>
+    </mat-menu>
+    
+    <button mat-button [matMenuTriggerFor]="pdfOptions">
+      <mat-icon>description</mat-icon>PDF File Options<mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #pdfOptions="matMenu">
+    <button mat-menu-item (click)="incrementZoom(0.1)">
+      <mat-icon>zoom_in</mat-icon>Zoom In
+    </button>
+    <button mat-menu-item (click)="incrementZoom(-0.1)">
+      <mat-icon>zoom_out</mat-icon>Zoom Out
+    </button>
+    <button mat-menu-item (click)="zoom = 1.0">
+      <mat-icon>fit_screen</mat-icon>Fit to Screen
+    </button>
+    <button mat-menu-item (click)="rotate(-90)">
+      <mat-icon>rotate_left</mat-icon>Rotate Left
+    </button>
+    <button mat-menu-item (click)="rotate(90)">
+      <mat-icon>rotate_right</mat-icon>Rotate Right
+    </button>
+  </mat-menu>
+
+
+
+    <button mat-button>
+      <mat-icon>home</mat-icon>Home
+    </button>
+    
+    <button mat-button (click)="incrementPage(-1)"><mat-icon>chevron_left</mat-icon>Previous Page</button>
+    Page {{page}} of {{ pdf?.numPages }}
+    <button mat-button (click)="incrementPage(1)">Next Page<mat-icon>chevron_right</mat-icon></button>
+
+    
+
+    <button mat-button (click)="openDownloadDialog()">
+      <mat-icon>save_alt</mat-icon>Download
+    </button>
+
+    <button mat-button>
+      <mat-icon>settings</mat-icon>Settings
+    </button>
+
+
+    
+
+
+
+
+
+
+    <!-- <div class="toolbar d-flex"> 
+      <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-open_in_browser-24px.svg'" (click)="openLocalFile()"
+        title="Open File"></span>
+      <span class="my-icon" [ngClass]="{ active: isOutlineShown }" [inlineSVG]="'/assets/icon/baseline-toc-24px.svg'"
+        (click)="toggleOutline()" title="Toggle Outline"></span>
+      <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_left-24px.svg'" (click)="rotate(-90)"
+        title="Rotate Left"></span>
+      <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-rotate_right-24px.svg'" (click)="rotate(90)"
+        title="Rotate Right"></span>
+      <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_in-24px.svg'" (click)="incrementZoom(0.1)"
+        title="Zoom In"></span>
+      <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-zoom_out-24px.svg'" (click)="incrementZoom(-0.1)"
+        title="Zoom Out"></span>
+      <span class="my-icon" [ngClass]="{ active: fitToPage }"
+        [inlineSVG]="'/assets/icon/baseline-insert_drive_file-24px.svg'" (click)="fitToPage = !fitToPage"
+        title="Toggle Fit Page"></span>
+      <span class="my-icon" [ngClass]="{ active: showAll }" [inlineSVG]="'/assets/icon/baseline-multi-pages-24px.svg'"
+        (click)="showAll = !showAll" title="Toggle Show All"></span>
+      <ng-container *ngIf="!showAll">
+        <span class="my-icon ml-auto" [inlineSVG]="'/assets/icon/baseline-navigate_before-24px.svg'"
+          (click)="incrementPage(-1)" title="Previous Page"></span>
+        <div>
+          <input type="number" class="page-num" placeholder="Page" [(ngModel)]="page" pattern="-?[0-9]*(\.[0-9]+)?" />
+          <span *ngIf="pdf">of {{ pdf.numPages }}</span>
+        </div>
+        <span class="my-icon" [inlineSVG]="'/assets/icon/baseline-navigate_next-24px.svg'" (click)="incrementPage(1)"
+          title="Next Page"></span>
+      </ng-container>
+    
+      <label class="my-icon ml-auto" [inlineSVG]="'/assets/icon/baseline-search-24px.svg'" for="searchbox"
+        title="Search.."></label>
+      <input #queryInp type="text" id="searchbox" name="searchbox" class="searchbox mr-5" placeholder="Search..."
+        [value]="pdfQuery" (input)="searchQueryChanged($event.target.value)"
+        (keyup.enter)="searchQueryChanged(queryInp.value)" />
+    </div> -->
+    {{selectedText}}
+    
+  </div>
+
+</div>
