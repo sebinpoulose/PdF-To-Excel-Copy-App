@@ -102,7 +102,7 @@
 
 
 
-    <button mat-button>
+    <button mat-button (click)="redirectToHome()">
       <mat-icon>home</mat-icon>Home
     </button>
     
@@ -163,8 +163,15 @@
         [value]="pdfQuery" (input)="searchQueryChanged($event.target.value)"
         (keyup.enter)="searchQueryChanged(queryInp.value)" />
     </div> -->
-    {{selectedText}}
-    
+    <!-- {{selectedText}} -->
+    <ag-grid-angular
+    style="height: 39vh"
+    class="ag-theme-alpine-dark"
+    [defaultColDef]="defaultColDef"
+    [rowData]="rowData"
+    (gridReady)="onGridReady($event)"
+    [columnDefs]="columnDefs">
+</ag-grid-angular>
   </div>
 
 </div>

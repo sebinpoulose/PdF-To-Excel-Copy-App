@@ -15,6 +15,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { DownloadDialogComponentComponent } from './download-dialog-component/download-dialog-component.component';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { DownloadDialogComponentComponent } from './download-dialog-component/do
   imports: [
     BrowserModule,PdfViewerModule,MatMenuModule,MatIconModule,MatSlideToggleModule,
     AppRoutingModule,MatButtonModule,MatDividerModule,MatCardModule,MatDialogModule,
-    BrowserAnimationsModule,FormsModule,MatFormFieldModule,MatInputModule,
+    BrowserAnimationsModule,FormsModule,MatFormFieldModule,MatInputModule,AgGridModule.withComponents([]),
   ],
   providers: [],
   bootstrap: [AppComponent]

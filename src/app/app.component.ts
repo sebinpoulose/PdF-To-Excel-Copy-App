@@ -9,6 +9,7 @@ declare var jQuery: any;
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  
 
   constructor(public dialog: MatDialog) {}
 
@@ -35,6 +36,33 @@ export class AppComponent {
   selectedText: string = "";
   showRowNumbers: boolean = true;
   excelFileName:string="";
+  gridApi: any;
+  gridColumnApi: any;
+
+  defaultColDef = {
+    flex: 1,
+    minWidth: 110,
+    editable: true,
+    resizable: true,
+  };
+  columnDefs = [
+    { field: 'make' },
+    { field: 'model' },
+    { field: 'price'}
+];
+
+rowData = [
+    { make: 'Toyota', model: 'Celica', price: 35000 },
+    { make: 'Ford', model: 'Mondeo', price: 32000 },
+    { make: 'Porsche', model: 'Boxter', price: 72000 },
+    { make: 'Ford', model: 'Mondeo', price: 32000 },
+    { make: 'Porsche', model: 'Boxter', price: 72000 },
+    { make: 'Ford', model: 'Mondeo' },
+    { make: 'Porsche', model: 'Boxter', price: 72000 },
+    { make: 'Ford', model: 'Mondeo', price: 32000 },
+    { make: 'Porsche', model: 'Boxter', price: 72000 }
+];
+
 
 
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent;
@@ -188,11 +216,33 @@ export class AppComponent {
   }
 
 
-  @HostListener('document:keypress', ['$event'])
-  getCopyedText() {
+  @HostListener('window:keydown', ['$event'])
+  getCopyedText(event) {
+    // console.log(event);
+    
+    if (event.key === "Tab") {
+      event.preventDefault();
+      event.stopPropagation();
     this.selectedText = window.getSelection().toString();
+    const cellDefs = this.gridApi.getFocusedCell(); 
+    this.gridApi.startEditingCell({
+      rowIndex: cellDefs.rowIndex,
+      colKey: cellDefs.column.getId(),
+      charPress: this.selectedText,
+    });
+    this.gridApi.tabToNextCell();
+    this.gridApi.stopEditing(true);
+  }}
+
+  redirectToHome(){
+    alert('The changes will be discarded');
+    this.pdfSrc=null;
   }
 
+  onGridReady(params) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+  }
 
   openDownloadDialog(): void { 
     let dialogRef = this.dialog.open(DownloadDialogComponentComponent, { 
@@ -201,9 +251,9 @@ export class AppComponent {
     }); 
   
     dialogRef.afterClosed().subscribe(result => { 
-      this.excelFileName = result; 
+      this.excelFileName = result;
+      this.gridApi.exportDataAsCsv({"fileName":this.excelFileName});
       console.log(this.excelFileName);
-      
     }); 
   } 
 
