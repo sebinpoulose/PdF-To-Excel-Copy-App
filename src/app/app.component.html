@@ -73,9 +73,9 @@
       <mat-icon>table_view</mat-icon>Excel File Options<mat-icon>arrow_drop_down</mat-icon>
     </button>
     <mat-menu #excelOptions="matMenu">
-      <button mat-menu-item>Edit Column Headers</button>
+      <button mat-menu-item (click)="editColHeadersDialog()">Edit Column Headers</button>
       <button mat-menu-item (click)="$event.stopPropagation();">
-        <mat-slide-toggle [checked]="showRowNumbers">Row Numbers</mat-slide-toggle>
+        <mat-slide-toggle [checked]="showRowNumbers" (change)="showRowNum()">Row Numbers</mat-slide-toggle>
       </button>
     </mat-menu>
     

@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Edit Column Headers</h1> 
+<div mat-dialog-content> 
+
+  <mat-form-field class="example-chip-list">
+    <mat-label>Use Comma or Enter Key to seperate multiple columns</mat-label>
+    <mat-chip-list #chipList >
+      <mat-chip *ngFor="let elem of data" [selectable]="selectable"
+               [removable]="removable" (removed)="remove(elem)">
+        {{elem.field}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+      <input placeholder="New Column..."
+             [matChipInputFor]="chipList"
+             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+             [matChipInputAddOnBlur]="addOnBlur"
+             (matChipInputTokenEnd)="add($event)">
+    </mat-chip-list>
+  </mat-form-field>
+</div> 
+<div mat-dialog-actions> 
+  <button mat-button (click)="onCancel()">Cancel</button> 
+  <button mat-button [mat-dialog-close]="data"  (click)="onSave()"
+              [disabled]="!data">Save</button> 
+</div>

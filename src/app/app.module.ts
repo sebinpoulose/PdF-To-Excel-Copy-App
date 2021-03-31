@@ -11,19 +11,22 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field'
 import {MatInputModule} from '@angular/material/input'
+import {MatChipsModule} from '@angular/material/chips'
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { DownloadDialogComponentComponent } from './download-dialog-component/download-dialog-component.component';
 import { AgGridModule } from 'ag-grid-angular';
+import { ColHeaderEditComponent } from './col-header-edit/col-header-edit.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DownloadDialogComponentComponent
+    DownloadDialogComponentComponent,
+    ColHeaderEditComponent
   ],
   imports: [
-    BrowserModule,PdfViewerModule,MatMenuModule,MatIconModule,MatSlideToggleModule,
+    BrowserModule,PdfViewerModule,MatMenuModule,MatIconModule,MatSlideToggleModule,MatChipsModule,
     AppRoutingModule,MatButtonModule,MatDividerModule,MatCardModule,MatDialogModule,
     BrowserAnimationsModule,FormsModule,MatFormFieldModule,MatInputModule,AgGridModule.withComponents([]),
   ],

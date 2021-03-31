@@ -1,7 +1,8 @@
 import { Component, HostListener, Inject, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PDFProgressData, PDFSource, PdfViewerComponent } from 'ng2-pdf-viewer';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DownloadDialogComponentComponent } from './download-dialog-component/download-dialog-component.component';
+import { ColHeaderEditComponent } from './col-header-edit/col-header-edit.component';
 declare var jQuery: any;
 @Component({
   selector: 'app-root',
@@ -9,9 +10,9 @@ declare var jQuery: any;
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  
 
-  constructor(public dialog: MatDialog) {}
+
+  constructor(public dialog: MatDialog) { }
 
   title = 'PDFtoExcelApp';
 
@@ -35,7 +36,7 @@ export class AppComponent {
   pdfQuery = '';
   selectedText: string = "";
   showRowNumbers: boolean = true;
-  excelFileName:string="";
+  excelFileName: string = "";
   gridApi: any;
   gridColumnApi: any;
 
@@ -45,23 +46,30 @@ export class AppComponent {
     editable: true,
     resizable: true,
   };
+  romNumDef={
+    headerName: "#",
+    valueGetter: "node.rowIndex + 1",
+    editable: false, resizable: false, maxWidth: 55, pinned: 'left'
+  };
   columnDefs = [
-    { field: 'make' },
-    { field: 'model' },
-    { field: 'price'}
-];
+    this.romNumDef,
+    // { field: 'make' },
+    // { field: 'model' },
+    // { field: 'price' }
+  ];
 
-rowData = [
-    { make: 'Toyota', model: 'Celica', price: 35000 },
-    { make: 'Ford', model: 'Mondeo', price: 32000 },
-    { make: 'Porsche', model: 'Boxter', price: 72000 },
-    { make: 'Ford', model: 'Mondeo', price: 32000 },
-    { make: 'Porsche', model: 'Boxter', price: 72000 },
-    { make: 'Ford', model: 'Mondeo' },
-    { make: 'Porsche', model: 'Boxter', price: 72000 },
-    { make: 'Ford', model: 'Mondeo', price: 32000 },
-    { make: 'Porsche', model: 'Boxter', price: 72000 }
-];
+  rowData = [
+    // { make: 'Toyota', model: 'Celica', price: 35000 },
+    // { make: 'Ford', model: 'Mondeo', price: 32000 },
+    // { make: 'Porsche', model: 'Boxter', price: 72000 },
+    // { make: 'Ford', model: 'Mondeo', price: 32000 },
+    // { make: 'Porsche', model: 'Boxter', price: 72000 },
+    // { make: 'Ford', model: 'Mondeo' },
+    // { make: 'Porsche', model: 'Boxter', price: 72000 },
+    // { make: 'Ford', model: 'Mondeo', price: 32000 },
+    // { make: 'Porsche', model: 'Boxter', price: 72000 }
+    {},{},{},{},{},{},{},{},{},{},{},{},
+  ];
 
 
 
@@ -219,24 +227,25 @@ rowData = [
   @HostListener('window:keydown', ['$event'])
   getCopyedText(event) {
     // console.log(event);
-    
+
     if (event.key === "Tab") {
       event.preventDefault();
       event.stopPropagation();
-    this.selectedText = window.getSelection().toString();
-    const cellDefs = this.gridApi.getFocusedCell(); 
-    this.gridApi.startEditingCell({
-      rowIndex: cellDefs.rowIndex,
-      colKey: cellDefs.column.getId(),
-      charPress: this.selectedText,
-    });
-    this.gridApi.tabToNextCell();
-    this.gridApi.stopEditing(true);
-  }}
+      this.selectedText = window.getSelection().toString();
+      const cellDefs = this.gridApi.getFocusedCell();
+      this.gridApi.startEditingCell({
+        rowIndex: cellDefs.rowIndex,
+        colKey: cellDefs.column.getId(),
+        charPress: this.selectedText,
+      });
+      this.gridApi.tabToNextCell();
+      this.gridApi.stopEditing(true);
+    }
+  }
 
-  redirectToHome(){
+  redirectToHome() {
     alert('The changes will be discarded');
-    this.pdfSrc=null;
+    this.pdfSrc = null;
   }
 
   onGridReady(params) {
@@ -244,18 +253,46 @@ rowData = [
     this.gridColumnApi = params.columnApi;
   }
 
-  openDownloadDialog(): void { 
-    let dialogRef = this.dialog.open(DownloadDialogComponentComponent, { 
-      width: '300px', 
-      data: {fileName: this.excelFileName } 
-    }); 
-  
-    dialogRef.afterClosed().subscribe(result => { 
+  openDownloadDialog(): void {
+    let dialogRef = this.dialog.open(DownloadDialogComponentComponent, {
+      width: '300px',
+      data: { fileName: this.excelFileName }
+    });
+    dialogRef.afterClosed().subscribe(result => {
       this.excelFileName = result;
-      this.gridApi.exportDataAsCsv({"fileName":this.excelFileName});
-      console.log(this.excelFileName);
-    }); 
-  } 
+      this.gridApi.exportDataAsCsv({ "fileName": this.excelFileName });
+    });
+  }
+
+  editColHeadersDialog(): void {
+
+    let dialogRef = this.dialog.open(ColHeaderEditComponent, {
+      width: '800px',
+      data: this.columnDefs.slice(1)
+    });
+    dialogRef.afterClosed().subscribe(
+
+      result => {
+        console.log(result);
+        result.unshift(this.columnDefs[0]);
+        this.columnDefs=result;
+        this.gridApi.setColumnDefs(this.columnDefs);
+      }
+
+    );
+
+  }
+
+  showRowNum():void{  
+    if(this.showRowNumbers){
+      this.showRowNumbers=false;
+      this.columnDefs=this.columnDefs.slice(1);
+    }
+    else{
+      this.showRowNumbers=true;
+      this.columnDefs.unshift(this.romNumDef);
+    }
+    this.gridApi.setColumnDefs(this.columnDefs);
+  }
 
 }
-
